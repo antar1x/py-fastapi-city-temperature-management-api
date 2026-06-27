@@ -13,8 +13,6 @@ async def fetch_temperature(city_name: str) -> float | None:
     async with httpx.AsyncClient() as client:
         response = await client.get(url, params=params)
 
-        print(f"City: {city_name}, Status: {response.status_code}, Response: {response.json()}")  # ← додай це
-
         if response.status_code != 200:
             return None
 

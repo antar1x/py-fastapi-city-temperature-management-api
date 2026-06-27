@@ -19,7 +19,7 @@ class CityRead(CityBase):
 
 class CityPartialUpdate(BaseModel):
     name: str | None = None
-    additional_info: str | None = None  # ← str, не int!
+    additional_info: str | None = None
 
 
 class TemperatureRead(BaseModel):
