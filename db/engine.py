@@ -1,13 +1,29 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from typing import Annotated, AsyncGenerator
 
-SQLALCHEMY_DATABASE_URI = "sqlite:///db.sqlite3"
+from fastapi import Depends
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.orm import DeclarativeBase  # ← додай імпорт
 
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URI,
-    connect_args={"check_same_thread": False}
+from core.config import settings
+
+
+engine = create_async_engine(settings.DATABASE_URL)
+
+AsyncSessionLocal = async_sessionmaker(
+    bind=engine,
+    autoflush=False,
+    autocommit=False,
+    expire_on_commit=False,
 )
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-Base = declarative_base()
+class Base(DeclarativeBase):  # ← додай Base
+    pass
+
+
+async def get_db():
+    async with AsyncSessionLocal() as db:
+        yield db
+
+
+CurrentSession = Annotated[AsyncSession, Depends(get_db)]
