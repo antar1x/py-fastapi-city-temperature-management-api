@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.models import CityModel, TemperatureModel
-from schemas import CityCreate, CityPartialUpdate, TemperatureRead
+from schemas import CityCreate, CityPartialUpdate
 
 
 async def get_all_cities(db: AsyncSession):
@@ -48,10 +48,11 @@ async def delete_city(db: AsyncSession, city_id: int):
     await db.commit()
     return db_city
 
+
 async def get_temperatures(
     db: AsyncSession,
-    city_id: int | None = None
-):
+    city_id: int | None = None,
+) -> list[TemperatureModel]:
     query = select(TemperatureModel)
 
     if city_id is not None:
@@ -63,12 +64,12 @@ async def get_temperatures(
 async def create_temperature(
     db: AsyncSession,
     city_id: int,
-    temperature: float
+    temperature: float,
 ) -> TemperatureModel:
     db_temperature = TemperatureModel(
         city_id=city_id,
         temperature=temperature,
-        date_time=datetime.datetime.now()  # ← поточний час
+        date_time=datetime.datetime.now(),
     )
     db.add(db_temperature)
     await db.commit()

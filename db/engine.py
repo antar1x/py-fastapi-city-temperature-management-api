@@ -1,8 +1,8 @@
-from typing import Annotated, AsyncGenerator
+from typing import Annotated
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import DeclarativeBase  # ← додай імпорт
+from sqlalchemy.orm import DeclarativeBase
 
 from core.config import settings
 
@@ -17,7 +17,7 @@ AsyncSessionLocal = async_sessionmaker(
 )
 
 
-class Base(DeclarativeBase):  # ← додай Base
+class Base(DeclarativeBase):
     pass
 
 

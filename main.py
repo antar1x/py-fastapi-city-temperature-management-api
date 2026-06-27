@@ -1,11 +1,11 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from temperature_fetch import fetch_temperature
-from crud import get_all_cities, create_temperature
 
-import schemas
 import crud
+import schemas
+from crud import get_all_cities, create_temperature
 from db.engine import get_db
+from temperature_fetch import fetch_temperature
 
 app = FastAPI()
 
@@ -31,8 +31,8 @@ async def create_city(city: schemas.CityCreate, db: AsyncSession = Depends(get_d
 @app.patch("/cities/{city_id}", response_model=schemas.CityRead)
 async def update_city(
     city_id: int,
-    city: schemas.CityPartialUpdate,  # ← тіло запиту
-    db: AsyncSession = Depends(get_db)
+    city: schemas.CityPartialUpdate,
+    db: AsyncSession = Depends(get_db),
 ):
     updated = await crud.patch_city(db=db, city_id=city_id, city=city)
     if not updated:
@@ -62,15 +62,16 @@ async def update_temperatures(db: AsyncSession = Depends(get_db)):
         record = await create_temperature(
             db=db,
             city_id=city.id,
-            temperature=temperature
+            temperature=temperature,
         )
         results.append(record)
 
     return results
 
+
 @app.get("/temperatures", response_model=list[schemas.TemperatureRead])
 async def get_temperatures(
     city_id: int | None = None,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     return await crud.get_temperatures(db=db, city_id=city_id)
